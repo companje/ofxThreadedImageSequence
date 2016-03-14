@@ -1,3 +1,6 @@
+//By Rick Companje
+//March 14, 2016
+
 #pragma once
 #include "ofxThreadedImageReloader.h"
 
