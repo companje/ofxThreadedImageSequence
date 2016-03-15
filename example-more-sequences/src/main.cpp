@@ -8,8 +8,10 @@ class ofApp : public ofBaseApp {
 public:
 
   vector<ofxThreadedImageSequencePlayer*> sequence; //we need to store pointers here because due to the use of ofThread our class's copy constructor is deleted
-  ofxThreadedImageSequencePlayer *cur;
+  ofxThreadedImageSequencePlayer *cur, *prev;
   ofQuaternion qTo;
+  ofShader shader;
+  float timer;
   
   void setup() {
     ofBackground(0);
@@ -29,11 +31,15 @@ public:
       sequence.push_back(seq);
     }
     
-    cur = sequence[0];
+    cur = prev = sequence[0];
+    timer = 1;
+    
+    shader.load("blend");
   }
 
   void update() {
     cur->update(); //only the current sequence is being updated
+    if (timer<1) timer+=2*1./60; else timer=1;
   }
   
   void applyRotation() {
@@ -56,10 +62,16 @@ public:
     ofEnableDepthTest();
     ofSetupScreenOrtho(ofGetWidth(),ofGetHeight(),-1500,1500);
     ofTranslate(ofGetWidth()/2, ofGetHeight()/2);
-    
-    cur->getTexture().bind();
+  
     applyRotation();
+    shader.begin();
+    shader.setUniformTexture("prev", prev->getTexture(), 1);
+    shader.setUniformTexture("cur", cur->getTexture(), 2);
+    shader.setUniform1f("t", timer);
     ofDrawSphere(ofGetHeight()/2);
+    shader.end();
+    
+    
     ofDisableDepthTest();
     ofSetupScreen();
     
@@ -89,6 +101,11 @@ public:
       ofDrawRectangle(0,0, 128, 64);
       ofPopMatrix();
     }
+    
+    prev->draw(0,300,128,64);
+    cur->draw(0,366,128,64);
+    ofDrawLine(0,295,128,295);
+    ofDrawCircle(timer*128,295,3);
   }
   
   void keyPressed(int key) {
@@ -97,7 +114,12 @@ public:
     if (key=='p' || key=='P') cur->setLoopState((cur->getLoopState()==OF_LOOP_NORMAL) ? OF_LOOP_PALINDROME : OF_LOOP_NORMAL);
     if (key=='r' || key=='R') cur->reverse();
     if (key==' ') cur->setPaused(!cur->isPaused());
-    if (key>='1' && key<=sequence.size()+'0') cur = sequence[key-'1'];
+    
+    if (key>='1' && key<=sequence.size()+'0') {
+      prev = cur;
+      cur = sequence[key-'1'];
+      timer = 0;
+    }
   }
   
   void mouseDragged(int x, int y, int button){
