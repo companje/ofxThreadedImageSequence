@@ -4,33 +4,36 @@
 #include "ofMain.h"
 #include "ofxThreadedImageSequencePlayer.h"
 
-#define NUM 7
-
 class ofApp : public ofBaseApp {
 public:
 
-  ofxThreadedImageSequencePlayer sequence[NUM];
+  vector<ofxThreadedImageSequencePlayer*> sequence; //we need to store pointers here because due to the use of ofThread our class's copy constructor is deleted
+  ofxThreadedImageSequencePlayer *cur;
   ofQuaternion qTo;
-  int cur;
   
   void setup() {
-    cur = 0;
     ofBackground(0);
     ofDisableArbTex();
     ofEnableDepthTest();
     
-    string maps[] = { "history2k", "airtraffic", "tsunami", "juliaset", "waterworld", "watermars", "clouds-201509" };
-    for (int i=0; i<NUM; i++) {
+    string folder = "/Users/rick/Documents/Globe4D/image-sequences/";
+    vector<string> maps = ofSplitString("history2k,airtraffic,tsunami,juliaset,waterworld,watermars,clouds-201509",",");
+    
+    for (int i=0; i<maps.size(); i++) {
+      ofxThreadedImageSequencePlayer *seq = new ofxThreadedImageSequencePlayer();
       cout << "preloading " << maps[i] << "... ";
-      sequence[i].load("/Users/rick/Documents/Globe4D/image-sequences/" + maps[i]);
-      sequence[i].play();
-      sequence[i].update();
-      cout << sequence[i].files.size() << " files" << endl;
+      seq->load(folder + maps[i]);
+      cout << seq->files.size() << " files" << endl;
+      seq->play();
+      seq->update();
+      sequence.push_back(seq);
     }
+    
+    cur = sequence[0];
   }
 
   void update() {
-    sequence[cur].update(); //only the current sequence is being updated
+    cur->update(); //only the current sequence is being updated
   }
   
   void applyRotation() {
@@ -43,7 +46,7 @@ public:
   }
 
   void draw() {
-    if (!sequence[cur].isInitialized()) {
+    if (!cur->isInitialized()) {
       ofDrawBitmapString("No image loaded...", 5, 15);
       return;
     }
@@ -54,7 +57,7 @@ public:
     ofSetupScreenOrtho(ofGetWidth(),ofGetHeight(),-1500,1500);
     ofTranslate(ofGetWidth()/2, ofGetHeight()/2);
     
-    sequence[cur].getTexture().bind();
+    cur->getTexture().bind();
     applyRotation();
     ofDrawSphere(ofGetHeight()/2);
     ofDisableDepthTest();
@@ -64,37 +67,37 @@ public:
     ofSetColor(255,255,0);
     int y=5;
     ofDrawBitmapString("Use +/- to change play speed", 5, y+=10);
-    ofDrawBitmapString("Use 'P' to toggle palindrome looping ("+ofToString(sequence[cur].getLoopState()==OF_LOOP_PALINDROME)+")", 5, y+=10);
+    ofDrawBitmapString("Use 'P' to toggle palindrome looping ("+ofToString(cur->getLoopState()==OF_LOOP_PALINDROME)+")", 5, y+=10);
     ofDrawBitmapString("Use 'R' to reverse", 5, y+=10);
     ofDrawBitmapString("Use mouse to rotate sphere", 5, y+=10);
     ofDrawBitmapString("app framerate: " + ofToString(ofGetFrameRate()), 5, y+=10);
-    ofDrawBitmapString("sequence fps: " + ofToString(sequence[cur].getFrameRate()), 5, y+=10);
-    ofDrawBitmapString("speed factor: " + ofToString(sequence[cur].getSpeed()), 5, y+=10);
-    ofDrawBitmapString("speed * fps: " + ofToString(sequence[cur].getSpeed() * sequence[cur].getFrameRate()), 5, y+=10);
-    ofDrawBitmapString("current sequence frame: " + ofToString(sequence[cur].getCurrentFrame()), 5, y+=10);
+    ofDrawBitmapString("sequence fps: " + ofToString(cur->getFrameRate()), 5, y+=10);
+    ofDrawBitmapString("speed factor: " + ofToString(cur->getSpeed()), 5, y+=10);
+    ofDrawBitmapString("speed * fps: " + ofToString(cur->getSpeed() * cur->getFrameRate()), 5, y+=10);
+    ofDrawBitmapString("current sequence frame: " + ofToString(cur->getCurrentFrame()), 5, y+=10);
     ofDrawBitmapString("current app frame: " + ofToString(ofGetFrameNum()), 5, y+=10);
-    ofDrawBitmapString("image load fps: " + ofToString(1/sequence[cur].loader.loadTime), 5, y+=10);
+    ofDrawBitmapString("image load fps: " + ofToString(1/cur->loader.loadTime), 5, y+=10);
     
     //thumbs
-    for (int i=0; i<NUM; i++) {
+    for (int i=0; i<sequence.size(); i++) {
       ofPushMatrix();
       ofSetColor(255);
       ofNoFill();
       ofTranslate(i*(128+18)+10, ofGetHeight()-64-10);
-      if (sequence[i].isInitialized()) sequence[i].draw(0,0, 128, 64);
-      ofSetLineWidth(i==cur ? 4 : 1);
+      if (sequence[i]->isInitialized()) sequence[i]->draw(0,0, 128, 64);
+      ofSetLineWidth(sequence[i]==cur ? 4 : 1);
       ofDrawRectangle(0,0, 128, 64);
       ofPopMatrix();
     }
   }
   
   void keyPressed(int key) {
-    if (key=='-') sequence[cur].setSpeed(sequence[cur].getSpeed()/1.1);
-    if (key=='+' || key=='=') sequence[cur].setSpeed(sequence[cur].getSpeed()*1.1);
-    if (key=='p' || key=='P') sequence[cur].setLoopState((sequence[cur].getLoopState()==OF_LOOP_NORMAL) ? OF_LOOP_PALINDROME : OF_LOOP_NORMAL);
-    if (key=='r' || key=='R') sequence[cur].reverse();
-    if (key==' ') sequence[cur].setPaused(!sequence[cur].isPaused());
-    if (key>='1' && key<=NUM+'0') cur = key-'1';
+    if (key=='-') cur->setSpeed(cur->getSpeed()/1.1);
+    if (key=='+' || key=='=') cur->setSpeed(cur->getSpeed()*1.1);
+    if (key=='p' || key=='P') cur->setLoopState((cur->getLoopState()==OF_LOOP_NORMAL) ? OF_LOOP_PALINDROME : OF_LOOP_NORMAL);
+    if (key=='r' || key=='R') cur->reverse();
+    if (key==' ') cur->setPaused(!cur->isPaused());
+    if (key>='1' && key<=sequence.size()+'0') cur = sequence[key-'1'];
   }
   
   void mouseDragged(int x, int y, int button){
