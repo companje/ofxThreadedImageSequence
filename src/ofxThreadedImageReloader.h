@@ -10,23 +10,24 @@ public:
   bool loading;
   ofxThreadedImageLoader loader;
   ofImage img;
-  string nextFilename;
+  string curFilename,nextFilename;
   float loadTime;
 
   ofxThreadedImageReloader() {
     loading = false;
+    curFilename = "";
     nextFilename = "";
   }
 
   void update() {
     static float startTime = 0;
     
-    if (!loading && nextFilename!="") {
+    if (!loading && nextFilename!=curFilename) {
       loader.setup(nextFilename);
       startTime = ofGetElapsedTimef();
       loading = true;
       loader.startThread();
-      nextFilename = "";
+      curFilename = nextFilename;
     }
 
     if (loading==true && !loader.isThreadRunning()){
@@ -38,7 +39,9 @@ public:
   }
 
   void load(string filename) {
-    nextFilename = filename;
+    if (filename!=curFilename) {
+      nextFilename = filename;
+    }
   }
 
   void draw() {
