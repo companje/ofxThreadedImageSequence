@@ -43,8 +43,10 @@
 
 /* Begin PBXFileReference section */
 		1DAE96891C97284500A8ACAC /* ofxThreadedImageSequencePlayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ofxThreadedImageSequencePlayer.h; path = ../src/ofxThreadedImageSequencePlayer.h; sourceTree = "<group>"; };
-		1DBD230D1C98AD7700034361 /* blend.frag */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; name = blend.frag; path = bin/data/blend.frag; sourceTree = "<group>"; };
-		1DBD230E1C98AD7700034361 /* blend.vert */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; name = blend.vert; path = bin/data/blend.vert; sourceTree = "<group>"; };
+		1DBD23111C98CB8000034361 /* .gitkeep */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitkeep; sourceTree = "<group>"; };
+		1DBD23121C98CB8000034361 /* globe.frag */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = globe.frag; sourceTree = "<group>"; };
+		1DBD23131C98CB8000034361 /* globe.vert */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.glsl; path = globe.vert; sourceTree = "<group>"; };
+		1DBD23141C98CB8000034361 /* normalmap.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = normalmap.png; sourceTree = "<group>"; };
 		2931BC22E809529EAA7B92E0 /* ofxThreadedImageReloader.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxThreadedImageReloader.h; path = ../../../addons/ofxThreadedImageSequence/src/ofxThreadedImageReloader.h; sourceTree = SOURCE_ROOT; };
 		9C759A0AC88D74226830736E /* ofxThreadedImageSequence.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxThreadedImageSequence.h; path = ../../../addons/ofxThreadedImageSequence/src/ofxThreadedImageSequence.h; sourceTree = SOURCE_ROOT; };
 		9E2FEC3C4590906D16F2B512 /* ofxThreadedImageLoader.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxThreadedImageLoader.h; path = ../../../addons/ofxThreadedImageSequence/src/ofxThreadedImageLoader.h; sourceTree = SOURCE_ROOT; };
@@ -68,13 +70,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		1DBD230C1C98AD6500034361 /* data */ = {
+		1DBD23101C98CB8000034361 /* data */ = {
 			isa = PBXGroup;
 			children = (
-				1DBD230D1C98AD7700034361 /* blend.frag */,
-				1DBD230E1C98AD7700034361 /* blend.vert */,
+				1DBD23111C98CB8000034361 /* .gitkeep */,
+				1DBD23121C98CB8000034361 /* globe.frag */,
+				1DBD23131C98CB8000034361 /* globe.vert */,
+				1DBD23141C98CB8000034361 /* normalmap.png */,
 			);
 			name = data;
+			path = bin/data;
 			sourceTree = "<group>";
 		};
 		47B576290EC9D23841D45075 /* src */ = {
@@ -122,7 +127,7 @@
 		E4B69B4A0A3A1720003C02F2 = {
 			isa = PBXGroup;
 			children = (
-				1DBD230C1C98AD6500034361 /* data */,
+				1DBD23101C98CB8000034361 /* data */,
 				E4B6FCAD0C3E899E008CF71C /* openFrameworks-Info.plist */,
 				E4EB6923138AFD0F00A09F29 /* Project.xcconfig */,
 				E4B69E1C0A3A1BDC003C02F2 /* src */,
