@@ -120,6 +120,10 @@ public:
     setFrame(pct * getTotalNumFrames());
   }
   
+  void setProgress(float pct) {
+    setPosition(pct);
+  }
+  
   virtual void setVolume(float volume) { // 0..1
     //not implemented;
   }
@@ -213,11 +217,15 @@ public:
       }
     }
       
-    //cout << "update: " << _curFrame << " speed: " << _speed << " fps: " << _fps << " _isPlaying: " << _isPlaying << endl;
+    cout << "mov update: " << _curFrame << " speed: " << _speed << " fps: " << _fps << " _isPlaying: " << _isPlaying << endl;
     //cout << files[frame].getAbsolutePath() << " _curFrame:" << _curFrame << endl;
     
     loader.load(files[(int)_curFrame].getAbsolutePath());
     loader.update();
+  }
+  
+  string getFilename(int frame) {
+    
   }
   
   //ofBaseDraws
