@@ -193,6 +193,7 @@ public:
   
   //ofBaseUpdates
   virtual void update() {
+    if (getTotalNumFrames()==0) return;
     
     if (_isPlaying) {
       float movieAppFrameRatio = _fps / (ofGetFrameRate() > 0 ? ofGetFrameRate() : 1);
