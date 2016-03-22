@@ -9,6 +9,7 @@ public:
   
   ofxThreadedImageReloader loader;
   vector<ofFile> files;
+  vector<ofTexture> tex; //texture planes. not really used but needed as return value in for example getTexturePlanes
   
   //------------------------------------------------------------------------------------------------------------
   static bool natural(const ofFile& a, const ofFile& b) {
@@ -58,6 +59,7 @@ public:
     ofSort(files, natural); //improved natural sort
     
     //ofLogNotice() << "ofxThreadedImageSequencePlayer::load: " << files.size() << " files";
+    return true;
   };
   
   virtual void loadAsync(string name) {
@@ -110,6 +112,7 @@ public:
   
   virtual bool getIsMovieDone() const {
     //?
+    return false;
   }
   
   virtual void setPaused(bool bPause) {
@@ -171,7 +174,7 @@ public:
   
   //ofBaseVideo
   virtual bool isFrameNew() const {
-    
+    return true;
   }
   
   virtual void close() {
@@ -180,10 +183,12 @@ public:
   
   virtual bool setPixelFormat(ofPixelFormat pixelFormat) {
     //?
+    return true;
   }
   
   virtual ofPixelFormat getPixelFormat() const {
     //?
+    return OF_PIXELS_RGB; //fixme
   }
   
   //ofBaseUpdates
@@ -217,15 +222,11 @@ public:
       }
     }
       
-    cout << "mov update: " << _curFrame << " speed: " << _speed << " fps: " << _fps << " _isPlaying: " << _isPlaying << endl;
+    //cout << "mov update: " << _curFrame << " speed: " << _speed << " fps: " << _fps << " _isPlaying: " << _isPlaying << endl;
     //cout << files[frame].getAbsolutePath() << " _curFrame:" << _curFrame << endl;
     
     loader.load(files[(int)_curFrame].getAbsolutePath());
     loader.update();
-  }
-  
-  string getFilename(int frame) {
-    
   }
   
   //ofBaseDraws
@@ -240,10 +241,12 @@ public:
   //ofBaseHasTexturePlanes
   virtual vector<ofTexture> & getTexturePlanes() {
     //?
+    return tex;
   }
   
   virtual const vector<ofTexture> & getTexturePlanes() const {
     //?
+    return tex;
   }
   
   //ofBaseHasTexture {
