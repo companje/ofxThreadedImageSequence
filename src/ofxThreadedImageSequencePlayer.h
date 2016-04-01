@@ -61,6 +61,10 @@ public:
     //ofLogNotice() << "ofxThreadedImageSequencePlayer::load: " << files.size() << " files";
     return true;
   };
+
+  void setFiles(vector<ofFile> files) { //copy
+    this->files = files;
+  }
   
   virtual void loadAsync(string name) {
     load(name);
