@@ -7,7 +7,7 @@
 class ofxThreadedImageSequencePlayer : public ofBaseVideoPlayer, public ofBaseVideoDraws {
 public:
   
-  ofxThreadedImageReloader loader;
+  ofxThreadedImageReloader *loader;
   vector<ofFile> files;
   vector<ofTexture> tex; //texture planes. not really used but needed as return value in for example getTexturePlanes
   
@@ -44,6 +44,11 @@ public:
     _fps = 20; //frames per second when speed is 1
     _playDir = 1;
     _loopState = OF_LOOP_NORMAL;
+    loader = new ofxThreadedImageReloader();
+  }
+  
+  ~ofxThreadedImageSequencePlayer() {
+    delete loader;
   }
   
   virtual bool load(string name) { //folder or filename
@@ -75,11 +80,11 @@ public:
   }
   
   virtual float getWidth() const {
-    return loader.img.getWidth(); //fixme: check if img.isAllocated()?
+    return loader->img.getWidth(); //fixme: check if img.isAllocated()?
   }
   
   virtual float getHeight() const {
-    return loader.img.getHeight(); //fixme: check if img.isAllocated()?
+    return loader->img.getHeight(); //fixme: check if img.isAllocated()?
   }
   
   virtual bool isPaused() const {
@@ -87,7 +92,7 @@ public:
   }
   
   virtual bool isLoaded() const {
-    return loader.img.isAllocated();
+    return loader->img.isAllocated();
   }
   
   virtual bool isPlaying() const {
@@ -226,17 +231,17 @@ public:
     //cout << "mov update: " << _curFrame << " speed: " << _speed << " fps: " << _fps << " _isPlaying: " << _isPlaying << endl;
     //cout << files[frame].getAbsolutePath() << " _curFrame:" << _curFrame << endl;
     
-    loader.load(files[(int)_curFrame].getAbsolutePath());
-    loader.update();
+    loader->load(files[(int)_curFrame].getAbsolutePath());
+    loader->update();
   }
   
   //ofBaseDraws
   virtual void draw(float x, float y) const {
-    loader.img.draw(x,y);
+    loader->img.draw(x,y);
   }
 
   virtual void draw(float x, float y, float w, float h) const {
-    loader.img.draw(x,y,w,h);
+    loader->img.draw(x,y,w,h);
   }
   
   //ofBaseHasTexturePlanes
@@ -252,28 +257,28 @@ public:
   
   //ofBaseHasTexture {
   virtual ofTexture & getTexture() {
-    return loader.img.getTexture();
+    return loader->img.getTexture();
   }
   
   virtual const ofTexture & getTexture() const {
-    return loader.img.getTexture();
+    return loader->img.getTexture();
   }
   
   virtual void setUseTexture(bool bUseTex) {
-    //? loader.img.setUseTexture(bUseTex);
+    //? loader->img.setUseTexture(bUseTex);
   }
   
   virtual bool isUsingTexture() const {
-    return loader.img.isUsingTexture();
+    return loader->img.isUsingTexture();
   }
   
   //ofBaseHasPixels
   virtual ofPixels & getPixels() {
-    return loader.img.getPixels();
+    return loader->img.getPixels();
   }
   
   virtual const ofPixels & getPixels() const {
-    return loader.img.getPixels();
+    return loader->img.getPixels();
   }
   
   //non-virtual methods (not inheritted from any base class)
