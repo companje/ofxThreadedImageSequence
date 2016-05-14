@@ -53,15 +53,27 @@ public:
   
   virtual bool load(string name) { //folder or filename
     ofFile file(name);
+
+    //cout << "extension: " << file.getExtension() << endl;
     
     if (file.isDirectory()) {
       files = ofDirectory(name).getFiles();
+      ofSort(files, natural); //improved natural sort
+    }
+    else if (file.getExtension() == "txt") {
+      vector<string> filenames = ofxLoadStrings(file.getAbsolutePath());
+      files.clear();
+      files.reserve(filenames.size());
+      //cout << "(pre)loading " << filenames.size() << " filenames" << endl;
+      for (int i = 0; i < filenames.size(); i++) {
+        //ofLog() << filenames.at(i);
+        files.push_back(ofFile(filenames.at(i)));
+      }
     } else {
       ofDirectory folder(file.getEnclosingDirectory());
       files = folder.getFiles();
+      ofSort(files, natural); //improved natural sort
     }
-    
-    ofSort(files, natural); //improved natural sort
     
     //ofLogNotice() << "ofxThreadedImageSequencePlayer::load: " << files.size() << " files";
     return true;
